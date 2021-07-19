@@ -1,0 +1,53 @@
+{
+  "name": "exchange-api",
+  "description": "Exchange API",
+  "version": "1.0.0",
+  "author": "4Steps",
+  "bugs": {
+    "url": ""
+  },
+  "contributors": [
+    {
+      "name": "David Aslanyan",
+      "email": "davidaslanyan94@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "@meanie/mongoose-to-json": "^2.5.0",
+    "axios": "^0.21.0",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "joi": "^17.3.0",
+    "mongoose": "^5.10.11",
+    "mongoose-hidden": "^1.9.0",
+    "morgan": "^1.10.0",
+    "node-schedule": "^2.0.0",
+    "swagger-ui-express": "^4.1.4",
+    "winston": "^3.3.3",
+    "xml2js": "^0.4.23",
+    "yamljs": "^0.3.0"
+  },
+  "engines": {
+    "node": "12.9.1",
+    "npm": "6.13.4"
+  },
+  "homepage": "",
+  "keywords": [
+    "4Steps",
+    "API",
+    "Exchange"
+  ],
+  "main": "src/index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "scripts": {
+    "seeding": "node src/database/seed/seeding",
+    "start": "node ./src/index.js",
+    "start-dev": "nodemon ./src/index.js"
+  }
+}

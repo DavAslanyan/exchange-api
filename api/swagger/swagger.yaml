@@ -1,0 +1,45 @@
+openapi: '3.0.3'
+info:
+  title: Exchange API
+  description: Exchange API Definition
+  version: 1.0.0
+  contact:
+    name: API support
+    email: qamalyanaren@gmail.com
+servers:
+  - url: '{host}/api/v1'
+    description: The development API server
+    variables:
+      host:
+        default: 'http://localhost:3020'
+tags:
+  - name: 1.Exchange
+    description: Exchange API
+
+paths:
+  /rates-list:
+    get:
+      summary: Get exchange list
+      description: |
+        Get exchange list
+      tags:
+        - 1.Exchange
+      responses:
+        200:
+          description: The exchange list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Exchange'
+
+components:
+  schemas:
+    Exchange:
+      type: object
+      properties:
+        currency:
+          type: string
+        rate:
+          type: string

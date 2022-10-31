@@ -1,5 +1,4 @@
 const xml2js = require('xml2js');
-const scheduleJob = require('node-schedule');
 const ExchangeModel = require('../models')
 const { SoapRequest, Constants } = require('../util')
 const { CURRENCY_TYPES } = Constants
@@ -9,7 +8,7 @@ class ExchangeService {
         const list = await ExchangeModel.getExchanges()
         const currencies = Object.keys(CURRENCY_TYPES)
         const result = []
-        currencies.forEach(from => {
+        list?.length && currencies.forEach(from => {
             currencies.forEach(to => {
                 if (from !== to) {
                     result.push(ExchangeService._getRate(from, to, list))
@@ -38,6 +37,7 @@ class ExchangeService {
 
     static async getExchangesFromCBA () {
         try {
+            console.log('start get exchanges from cba')
             const headers = {
                 'Content-Type': 'application/soap+xml',
             };
@@ -49,12 +49,14 @@ class ExchangeService {
                      </soap12:Envelope>`
             const url = 'http://api.cba.am/exchangerates.asmx';
             const response = await SoapRequest({ url, headers, xml }).then(async({ response }) => response)
+            console.log("soap response ", !!response);
             const xmlResponse = response?.body
             const parseData = xmlResponse && await xml2js.parseStringPromise(xmlResponse)
 
             // console.log('body', parseData?.['soap:Envelope']?.['soap:Body']?.[0]?.ExchangeRatesLatestResponse?.[0]?.ExchangeRatesLatestResult?.[0]?.Rates?.[0]?.ExchangeRate)
             const exchanges = parseData?.['soap:Envelope']?.['soap:Body']?.[0]?.ExchangeRatesLatestResponse?.[0]?.ExchangeRatesLatestResult?.[0]?.Rates?.[0]?.ExchangeRate
             const result = exchanges.filter(e => Object.keys(CURRENCY_TYPES).some(currency => e?.ISO?.[0] === currency))
+            console.log("parsed result", result);
 
             // const nextRequestingDate = parseData?.['soap:Envelope']?.['soap:Body']?.[0]?.ExchangeRatesLatestResponse?.[0]?.ExchangeRatesLatestResult?.[0]?.NextAvailableDate?.[0]
             // console.log('nextRequestingDate', nextRequestingDate)
@@ -71,7 +73,7 @@ class ExchangeService {
                 }
             })
             await Promise.all(promises)
-            scheduleJob.scheduleJob('0 0 14 * * *', ExchangeService.getExchangesFromCBA)
+            console.log('end get exchanges')
         } catch ( e ) {
             console.log('error get exchanges from cba', e)
         }

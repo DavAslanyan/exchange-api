@@ -2,6 +2,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const express = require('express')
 const morgan = require('morgan')
+const scheduleJob = require("node-schedule");
 const ExchangeService = require('./services')
 
 const MongodbConnection = require('./database/mongodb.connection')
@@ -24,10 +25,10 @@ class App {
       this._setCors()
       this._setRequestParser()
       App._initializeStorage()
-      App._getExchanges()
+      this._setupExchangeSchedule()
       this._initializeApi()
       this._setErrorHandler()
-    } catch (error) {
+    } catch ( error ) {
       throw new Error(error)
     }
   }
@@ -51,12 +52,16 @@ class App {
     this.app.use(bodyParser.json({ limit: '1mb' }))
   }
 
-  static _getExchanges () {
-    ExchangeService.getExchangesFromCBA()
+  _setupExchangeSchedule () {
+    scheduleJob.scheduleJob('0 0 14 * * *', ExchangeService.getExchangesFromCBA)
   }
 
   static _initializeStorage () {
-    MongodbConnection.init(MONGODB.URL)
+    MongodbConnection.init(MONGODB.URL, App._storageSuccessCallback)
+  }
+
+  static _storageSuccessCallback () {
+    ExchangeService.getExchangesFromCBA()
   }
 
   _initializeApi () {

@@ -42,20 +42,20 @@ class ExchangeService {
                 'Content-Type': 'application/soap+xml',
             };
             const xml = `<?xml version="1.0" encoding="utf-8"?>
-<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
-  <soap12:Body>
-    <ISOCodes xmlns="http://www.cba.am/" />
-  </soap12:Body>
-</soap12:Envelope>`
+                     <soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">
+                       <soap12:Body>
+                         <ExchangeRatesLatest xmlns="http://www.cba.am/" />
+                       </soap12:Body>
+                     </soap12:Envelope>`
             const url = 'http://api.cba.am/exchangerates.asmx';
             const response = await SoapRequest({ url, headers, xml }).then(async({ response }) => response)
-            console.log("soap response ", response);
+            console.log("soap response ", !!response);
             const xmlResponse = response?.body
             const parseData = xmlResponse && await xml2js.parseStringPromise(xmlResponse)
 
             // console.log('body', parseData?.['soap:Envelope']?.['soap:Body']?.[0]?.ExchangeRatesLatestResponse?.[0]?.ExchangeRatesLatestResult?.[0]?.Rates?.[0]?.ExchangeRate)
             const exchanges = parseData?.['soap:Envelope']?.['soap:Body']?.[0]?.ExchangeRatesLatestResponse?.[0]?.ExchangeRatesLatestResult?.[0]?.Rates?.[0]?.ExchangeRate
-            const result = exchanges?.filter(e => Object.keys(CURRENCY_TYPES).some(currency => e?.ISO?.[0] === currency))
+            const result = exchanges?.filter(e => Object.keys(CURRENCY_TYPES)?.some(currency => e?.ISO?.[0] === currency))
             console.log("parsed result", result);
 
             // const nextRequestingDate = parseData?.['soap:Envelope']?.['soap:Body']?.[0]?.ExchangeRatesLatestResponse?.[0]?.ExchangeRatesLatestResult?.[0]?.NextAvailableDate?.[0]

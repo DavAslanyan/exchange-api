@@ -67,7 +67,8 @@ class ExchangeService {
             const promises = result?.map(item => {
                 if (item?.ISO?.[0]) {
                     const payload = {
-                        rate: item?.Rate?.[0] || 1
+                        rate: item?.Rate?.[0] || 1,
+                        difference: item?.Difference?.[0] || 0
                     }
                     return ExchangeModel.updateExchange(item.ISO[0], payload)
                 }

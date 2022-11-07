@@ -26,8 +26,10 @@ class ExchangeService {
             const rate = list.find(c => c.currency === to).rate
             ex.rate = Math.floor(1 / rate * 10000) / 10000
         } else if (to === CURRENCY_TYPES.AMD) {
-            ex.rate = list.find(c => c.currency === from).rate
-        } else{
+            const exchange = list.find(c => c.currency === from)
+            ex.rate = exchange.rate
+            ex.difference = exchange.difference
+        } else {
             const rateFrom = list.find(c => c.currency === from).rate
             const rateTo = list.find(c => c.currency === to).rate
             ex.rate = ex.rate = Math.floor(rateFrom / rateTo * 10000) / 10000
